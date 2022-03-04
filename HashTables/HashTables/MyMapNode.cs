@@ -22,9 +22,25 @@ namespace HashTables
         }
         protected int GetArrayPosition(K key)
         {
-            int hash = key.GetHashCode();    
-            int position = hash % size;      
+            int hash = key.GetHashCode();
+            int position = hash % size;
             return Math.Abs(position);
+        }
+        public LinkedList<KeyValue<K, V>> GetArrayPositionAndLinkedList(K key)
+        {
+            int position = GetArrayPosition(key);       //index number of array
+            LinkedList<KeyValue<K, V>> linkedList = GetLinkedList(position);
+            return linkedList;
+        }
+        protected LinkedList<KeyValue<K, V>> GetLinkedList(int position)
+        {
+            LinkedList<KeyValue<K, V>> linkedList = items[position];
+            if (linkedList == null)
+            {
+                linkedList = new LinkedList<KeyValue<K, V>>();
+                items[position] = linkedList;
+            }
+            return linkedList;
         }
         public V Get(K key)
         {
@@ -52,42 +68,55 @@ namespace HashTables
                 }
             }
             linkedList.AddLast(item);
-            //Console.WriteLine(item.Key +" "+ item.V
         }
-         public LinkedList<KeyValue<K, V>> GetArrayPositionAndLinkedList(K key)
-         {
-            int position = GetArrayPosition(key);       //index number of array
-            LinkedList<KeyValue<K, V>> linkedList = GetLinkedList(position);
-            return linkedList;
-          }
-        protected LinkedList<KeyValue<K, V>> GetLinkedList(int position)
+        public bool Exists(K key)
         {
-            LinkedList<KeyValue<K, V>> linkedList = items[position];
-            if (linkedList == null)
+            var linkedList = GetArrayPositionAndLinkedList(key);
+            foreach (KeyValue<K, V> item1 in linkedList)
             {
-                linkedList = new LinkedList<KeyValue<K, V>>();
-                items[position] = linkedList;
-            }
-            return linkedList;
-        }
-            public void Remove(K key)
-            {
-                var linkedList = GetArrayPositionAndLinkedList(key);
-                bool itemFound = false;
-                KeyValue<K, V> foundItem = default(KeyValue<K, V>);
-                foreach (KeyValue<K, V> item in linkedList)
+                if (item1.Key.Equals(key))
                 {
-                    if (item.Key.Equals(key))
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void Remove(K key)
+        {
+            var linkedList = GetArrayPositionAndLinkedList(key);
+            bool itemFound = false;
+            KeyValue<K, V> foundItem = default(KeyValue<K, V>);
+            foreach (KeyValue<K, V> item in linkedList)
+            {
+                if (item.Key.Equals(key))
+                {
+                    itemFound = true;
+                    foundItem = item;
+                }
+            }
+            if (itemFound)
+            {
+                linkedList.Remove(foundItem);
+                Console.WriteLine("Removed successfuy with same key: " + foundItem.Key);
+            }
+        }
+        public void Display()
+        {
+            foreach (var linkedList in items)
+            {
+                if (linkedList != null)
+                {
+                    foreach (var element in linkedList)
                     {
-                        itemFound = true;
-                        foundItem = item;
+                        string res = element.ToString();
+
+                        if (res != null)
+                           Console.WriteLine(element.Key + " " + element.Value);
                     }
-                }
-                if (itemFound)
-                {
-                    linkedList.Remove(foundItem);
-                    Console.WriteLine("Removed successfuy with key: " + foundItem.Key);
+                    
                 }
             }
         }
+    }
 }
