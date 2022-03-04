@@ -25,6 +25,10 @@ namespace HashTables
             }
             Console.WriteLine("Displaying after Add operation:");
             hashTable.Display();
+            string removeWord = "avoidable";
+            hashTable.Remove(removeWord);
+            Console.WriteLine("\nAfter removing an item- {0}:", removeWord);
+            hashTable.Display();
         }
     }
 }
